@@ -35,5 +35,39 @@ impl<T> Graph<T> {
         }
     }
     
+    pub fn add_vertex() {
 
+    }
+
+    pub fn add_edge() {
+
+    }
+
+    pub fn neighbours() {
+
+    }
+
+    pub fn vertex_count() {
+
+    }
+
+    pub fn edge_count() {
+
+    }
+
+    pub fn remove_vertex() {
+
+    }
+
+    pub fn remove_edge() {
+
+    }
+
+    pub fn in_neighbours() ->  {
+
+    }
+
+    pub fn out_neighbours() -> {
+        
+    }
 }
