@@ -1,2 +1,2 @@
-pub mod game_graph;
+pub mod graph;
 
