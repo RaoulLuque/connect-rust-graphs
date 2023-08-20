@@ -36,37 +36,39 @@ impl<T: Eq + PartialEq + Hash> Graph<T> {
         }
     }
     
+    /// Adds a vertex
     pub fn add_vertex(&mut self, vertex: T) {
         self.vertices.insert(vertex);
     }
 
+    /// Adds a vertex with label
     pub fn add_vertex_with_label(&mut self, vertex: T, label: &str) {
         self.vertices.insert(vertex);
         self.vertex_labels.insert(vertex, label.to_owned());
     }
 
-    pub fn add_edge() {
-
+    /// To do add error when no such vertices present
+    pub fn add_edge(&mut self, edge: (T,T)) {
+        self.edges.insert(edge);
     }
 
-    pub fn neighbours() {
-
+    /// Returns the number of vertices
+    pub fn vertex_count(&self) -> usize {
+        self.vertices.len()
     }
 
-    pub fn vertex_count() {
-
+    /// Returns the number of edges
+    pub fn edge_count(&self) -> usize {
+        self.edges.len()
     }
 
-    pub fn edge_count() {
-
+    /// Removes a vertex
+    pub fn remove_vertex(&mut self, vertex: &T) -> bool {
+        self.vertices.remove(vertex)
     }
 
-    pub fn remove_vertex() {
-
-    }
-
-    pub fn remove_edge() {
-
+    pub fn remove_edge(&mut self, edge: &(T,T)) -> bool {
+        self.edges.remove(&edge)
     }
 
     pub fn in_neighbours() ->  {
