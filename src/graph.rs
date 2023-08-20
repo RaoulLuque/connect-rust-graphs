@@ -3,10 +3,11 @@
 // Edges are encoded as HashSet<Tuple<Node,Node>>
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::hash::Hash;
 
-
-
-pub struct Graph<T> {
+/// Graph structure where keys are usually primitive like tuples of lists in order to store 
+/// gamestates of a game as a graph with e.g. their respective ratings
+pub struct Graph<T: Eq + PartialEq + Hash> {
     /// Set of vertices in the graph
     vertices: HashSet<T>,
 
@@ -23,7 +24,7 @@ pub struct Graph<T> {
     outbound_table: HashMap<T, Vec<T>>,
 }
 
-impl<T> Graph<T> {
+impl<T: Eq + PartialEq + Hash> Graph<T> {
     /// Creates a new graph
     pub fn new() -> Graph<T> {
         Graph {
@@ -35,8 +36,13 @@ impl<T> Graph<T> {
         }
     }
     
-    pub fn add_vertex() {
+    pub fn add_vertex(&mut self, vertex: T) {
+        self.vertices.insert(vertex);
+    }
 
+    pub fn add_vertex_with_label(&mut self, vertex: T, label: &str) {
+        self.vertices.insert(vertex);
+        self.vertex_labels.insert(vertex, label.to_owned());
     }
 
     pub fn add_edge() {
@@ -68,6 +74,6 @@ impl<T> Graph<T> {
     }
 
     pub fn out_neighbours() -> {
-        
+
     }
 }
