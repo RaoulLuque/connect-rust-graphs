@@ -3,6 +3,7 @@
 // Edges are encoded as HashSet<Tuple<Node,Node>>
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::collections::vec
 use std::hash::Hash;
 
 /// Graph structure where keys are usually primitive like tuples of lists in order to store 
@@ -63,19 +64,37 @@ impl<T: Eq + PartialEq + Hash> Graph<T> {
     }
 
     /// Removes a vertex
-    pub fn remove_vertex(&mut self, vertex: &T) -> bool {
-        self.vertices.remove(vertex)
+    pub fn remove_vertex(&mut self, vertex: &T){
+        self.vertices.remove(vertex);
+        // Remove outgoing edges with other vertices
+        if let Some(outbound) = self.outbound_table.get_mut(vertex) {
+            for other_vertex in outbound {
+                self.remove_edge(vertex, other_vertex);
+            }
+        }
+
+        // Remove ingoing edges with other vertices
+        if let Some(inbound) = self.inbound_table.get_mut(vertex) {
+            for other_vertex in inbound {
+                self.remove_edge(other_vertex, vertex);
+            }
+        }
     }
 
-    pub fn remove_edge(&mut self, edge: &(T,T)) -> bool {
-        self.edges.remove(&edge)
+    pub fn remove_edge(&mut self, inbound: &T, outbound: &T) {
     }
 
-    pub fn in_neighbours() ->  {
-
+    pub fn in_neighbors(&self, vertex: &T) -> std::slice::Iter<'_, T>{
+        match self.inbound_table.get(vertex) {
+            Some(neighbors) => neighbors.iter(),
+            None => [].iter(),
+        }
     }
 
-    pub fn out_neighbours() -> {
-
+    pub fn out_neighbours(&self, vertex: &T) -> std::slice::Iter<'_, T> {
+        match self.inbound_table.get(vertex) {
+            Some(neighbors) => neighbors.iter(),
+            None => [].iter(),
+        }
     }
 }
