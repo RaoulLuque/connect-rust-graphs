@@ -48,8 +48,31 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
     }
 
     /// To do add error when no such vertices present
-    pub fn add_edge(&mut self, incoming: T, outgoing: T) {
+    pub fn add_edge(&mut self, outgoing: T, incoming: T) {
         self.edges.insert((outgoing, incoming));
+
+
+        match self.inbound_table.get_mut(&incoming) {
+            Some(inbounds) => {inbounds.push(outgoing)},
+            None => {
+                let mut v: Vec<T> = Vec::new();
+                v.push(outgoing);
+                self.inbound_table.insert(incoming, v);}
+        }
+
+        match self.outbound_table.get_mut(&outgoing) {
+            Some(outbounds) => {outbounds.push(incoming)},
+            None => {
+                let mut v: Vec<T> = Vec::new();
+                v.push(incoming);
+                self.inbound_table.insert(outgoing, v);}
+        }
+
+
+
+
+
+
     }
 
     /// Returns the number of vertices
@@ -158,6 +181,6 @@ mod tests {
         g.add_edge(2, i);
         g.add_edge(i, i);
         g.remove_vertex(&i);
-        assert!(g.edges.contains(&(i,i)));
+        assert!(!g.edges.contains(&(i,i)));
     }
 }
