@@ -3,7 +3,6 @@
 // Edges are encoded as HashSet<Tuple<Node,Node>>
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::collections::vec
 use std::hash::Hash;
 
 /// Graph structure where keys are usually primitive like tuples of lists in order to store 
@@ -81,9 +80,12 @@ impl<T: Eq + PartialEq + Hash> Graph<T> {
         }
     }
 
-    pub fn remove_edge(&mut self, inbound: &T, outbound: &T) {
+    /// Removes an edge
+    pub fn remove_edge(&mut self, inbound: T, outbound: T) -> bool {
+        self.edges.remove(&(inbound,outbound))
     }
 
+    /// Returns an iterator with the ingoing neighbors of the given vertex
     pub fn in_neighbors(&self, vertex: &T) -> std::slice::Iter<'_, T>{
         match self.inbound_table.get(vertex) {
             Some(neighbors) => neighbors.iter(),
@@ -91,6 +93,7 @@ impl<T: Eq + PartialEq + Hash> Graph<T> {
         }
     }
 
+    /// Returns an iterator with the outgoing neighbors of the given vertex
     pub fn out_neighbours(&self, vertex: &T) -> std::slice::Iter<'_, T> {
         match self.inbound_table.get(vertex) {
             Some(neighbors) => neighbors.iter(),
