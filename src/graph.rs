@@ -81,7 +81,7 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         self.edges.len()
     }
 
-    /// Removes a vertex
+    /// Removes a vertex to do: add error if no such vertex is present
     pub fn remove_vertex(&mut self, vertex: &T){
         self.vertices.remove(vertex);
         // Remove outgoing edges with other vertices
@@ -99,7 +99,7 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         }
     }
 
-    /// Removes an edge
+    /// Removes an edge to do: add error if no such vertex is present
     pub fn remove_edge(&mut self, inbound: &T, outbound: &T) -> bool {
         self.edges.remove(&(*inbound,*outbound))
     }
@@ -179,4 +179,6 @@ mod tests {
         g.remove_vertex(&i);
         assert!(!g.edges.contains(&(i,i)));
     }
+
+    // to do add test with vertex labels
 }
