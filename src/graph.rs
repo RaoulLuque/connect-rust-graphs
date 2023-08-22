@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 use std::hash::Hash;
 
+
 /// Graph structure where keys are usually primitive like tuples of lists in order to store 
 /// gamestates of a game as a graph with e.g. their respective ratings
 pub struct Graph<T: Eq + PartialEq + Hash + Copy> {
@@ -23,6 +24,7 @@ pub struct Graph<T: Eq + PartialEq + Hash + Copy> {
     /// Mapping of vertices to vector of their inbound neighbours
     outbound_table: HashMap<T, Vec<T>>,
 }
+
 
 impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
     /// Creates a new graph
@@ -67,12 +69,6 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
                 v.push(incoming);
                 self.inbound_table.insert(outgoing, v);}
         }
-
-
-
-
-
-
     }
 
     /// Returns the number of vertices
@@ -125,10 +121,10 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
     }
 }
 
+
 #[cfg(test)]
 mod tests {
     use super::*;
-
 
     #[test]
     fn creating_empty_graph() {
