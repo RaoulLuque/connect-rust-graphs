@@ -17,7 +17,9 @@ pub enum GraphError {
 
 
 /// Graph structure where keys are usually primitive like tuples of lists in order to store 
-/// gamestates of a game as a graph with e.g. their respective ratings
+/// gamestates of a game as a graph with e.g. their respective ratings.
+/// Vertices and edges are implemented as sets of T and (T,T) tuples respectively and labels are
+/// implemented as a hashmap,  just like the adjacency tables of the vertices.
 pub struct Graph<T: Eq + PartialEq + Hash + Copy> {
     /// Set of vertices in the graph
     vertices: HashSet<T>,
@@ -97,13 +99,16 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         self.edges.len()
     }
 
-    /// Removes a vertex to do remove label from labels
+    /// Removes a vertex to do: remove label from labels
     pub fn remove_vertex(&mut self, vertex: &T) -> Result<(), GraphError> {
         if !self.vertices.contains(vertex) {
             return Err(GraphError::NoSuchVertex);
         }
 
+        // Remove vertex from vertices and remove label if present
         self.vertices.remove(vertex);
+        self.vertex_labels.remove(vertex);
+
         // Remove outgoing edges with other vertices
         if let Some(outbound) = self.outbound_table.remove(vertex) {
             for other_vertex in outbound {
