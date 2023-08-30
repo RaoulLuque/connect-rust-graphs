@@ -230,6 +230,7 @@ mod tests {
         g.add_vertex_with_label(2, "B");
         assert_eq!(g.vertex_count(), 2);
 
+        assert_eq!(g.get_label(&1).unwrap(), "A");
     } 
     // to do add test with vertex labels 
 
