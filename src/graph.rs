@@ -5,6 +5,16 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 use std::hash::Hash;
 
+/// Graph operation error
+pub enum GraphError {
+    /// There is no vertex with the given id in the graph
+    NoSuchVertex,
+
+    /// There is no such edge in the graph
+    NoSuchEdge,
+
+}
+
 
 /// Graph structure where keys are usually primitive like tuples of lists in order to store 
 /// gamestates of a game as a graph with e.g. their respective ratings
@@ -49,11 +59,15 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         self.vertex_labels.insert(vertex, label.to_owned());
     }
 
-    /// To do add error when no such vertices present
-    pub fn add_edge(&mut self, outgoing: T, incoming: T) {
+    /// Adds an edge from outgoing to incoming
+    pub fn add_edge(&mut self, outgoing: T, incoming: T) -> Result<(), GraphError> {
+        if !self.vertices.contains(&outgoing) || !self.vertices.contains(&incoming) {
+            return Err(GraphError::NoSuchVertex);
+        }
+
         self.edges.insert((outgoing, incoming));
 
-
+        
         match self.inbound_table.get_mut(&incoming) {
             Some(inbounds) => {inbounds.push(outgoing)},
             None => {
@@ -63,12 +77,13 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         }
 
         match self.outbound_table.get_mut(&outgoing) {
-            Some(outbounds) => {outbounds.push(incoming)},
+            Some(outbounds) => {outbounds.push(incoming);},
             None => {
                 let mut v: Vec<T> = Vec::new();
                 v.push(incoming);
                 self.inbound_table.insert(outgoing, v);}
         }
+        Ok(())
     }
 
     /// Returns the number of vertices
@@ -81,27 +96,36 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         self.edges.len()
     }
 
-    /// Removes a vertex to do: add error if no such vertex is present
-    pub fn remove_vertex(&mut self, vertex: &T){
+    /// Removes a vertex
+    pub fn remove_vertex(&mut self, vertex: &T) -> Result<(), GraphError> {
+        if !self.vertices.contains(vertex) {
+            return Err(GraphError::NoSuchVertex);
+        }
+
         self.vertices.remove(vertex);
         // Remove outgoing edges with other vertices
         if let Some(outbound) = self.outbound_table.remove(vertex) {
             for other_vertex in outbound {
-                self.remove_edge(vertex, &other_vertex);
+                let _ = self.remove_edge(vertex, &other_vertex);
             }
         }
 
         // Remove ingoing edges with other vertices
         if let Some(inbound) = self.inbound_table.remove(vertex) {
             for other_vertex in inbound {
-                self.remove_edge(&other_vertex, vertex);
+                let _ = self.remove_edge(&other_vertex, vertex);
             }
         }
+        Ok(())
     }
 
-    /// Removes an edge to do: add error if no such vertex is present
-    pub fn remove_edge(&mut self, inbound: &T, outbound: &T) -> bool {
-        self.edges.remove(&(*inbound,*outbound))
+    /// Removes an edge
+    pub fn remove_edge(&mut self, inbound: &T, outbound: &T) -> Result<(), GraphError> {
+        if !self.edges.remove(&(*inbound,*outbound)) {
+            Ok(())
+        } else {
+            Err(GraphError::NoSuchEdge)
+        }
     }
 
     /// Returns an iterator with the ingoing neighbors of the given vertex
@@ -163,8 +187,8 @@ mod tests {
         g.add_vertex(2);
         g.add_vertex(3);
         let i = 3;
-        g.add_edge(2, i);
-        g.add_edge(i, i);
+        let _ = g.add_edge(2, i);
+        let _ = g.add_edge(i, i);
     } 
 
     #[test]
@@ -174,11 +198,11 @@ mod tests {
         g.add_vertex(2);
         g.add_vertex(3);
         let i = 3;
-        g.add_edge(2, i);
-        g.add_edge(i, i);
-        g.remove_vertex(&i);
+        let _ = g.add_edge(2, i);
+        let _ = g.add_edge(i, i);
+        let _ = g.remove_vertex(&i);
         assert!(!g.edges.contains(&(i,i)));
     }
 
-    // to do add test with vertex labels
+    // to do add test with vertex labels 
 }
