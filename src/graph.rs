@@ -97,7 +97,7 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         self.edges.len()
     }
 
-    /// Removes a vertex
+    /// Removes a vertex to do remove label from labels
     pub fn remove_vertex(&mut self, vertex: &T) -> Result<(), GraphError> {
         if !self.vertices.contains(vertex) {
             return Err(GraphError::NoSuchVertex);
@@ -129,6 +129,16 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         }
     }
 
+    /// Returns the label of a vertex as readable reference
+    pub fn get_label(&mut self, vertex: &T) -> Option<&String> {
+        self.vertex_labels.get(vertex)
+    }
+
+    /// Returns the label of a vertex as readable reference
+    pub fn get_label_mut(&mut self, vertex: &T) -> Option<&mut String> {
+        self.vertex_labels.get_mut(vertex)
+    }
+
     /// Returns an iterator with the ingoing neighbors of the given vertex
     pub fn in_neighbors(&self, vertex: &T) -> std::slice::Iter<'_, T>{
         match self.inbound_table.get(vertex) {
@@ -144,6 +154,8 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
             None => [].iter(),
         }
     }
+
+
 }
 
 
