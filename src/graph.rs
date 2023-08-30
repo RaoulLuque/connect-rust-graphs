@@ -67,7 +67,7 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
 
         self.edges.insert((outgoing, incoming));
 
-        
+        // Add outgoing edge to adjacency table of incoming vertex
         match self.inbound_table.get_mut(&incoming) {
             Some(inbounds) => {inbounds.push(outgoing)},
             None => {
@@ -76,6 +76,7 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
                 self.inbound_table.insert(incoming, v);}
         }
 
+        // Add incoming edge to adjacency table of outgoing vertex
         match self.outbound_table.get_mut(&outgoing) {
             Some(outbounds) => {outbounds.push(incoming);},
             None => {
