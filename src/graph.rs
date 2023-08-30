@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 use std::hash::Hash;
 
+#[derive(Debug)]
 /// Graph operation error
 pub enum GraphError {
     /// There is no vertex with the given id in the graph
@@ -144,18 +145,18 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         self.vertex_labels.get_mut(vertex)
     }
 
-    /// Returns an iterator with the ingoing neighbors of the given vertex
-    pub fn in_neighbors(&self, vertex: &T) -> std::slice::Iter<'_, T>{
+    /// Returns an iterator with the ingoing neighbours of the given vertex
+    pub fn in_neighbours(&self, vertex: &T) -> std::slice::Iter<'_, T>{
         match self.inbound_table.get(vertex) {
-            Some(neighbors) => neighbors.iter(),
+            Some(neighbours) => neighbours.iter(),
             None => [].iter(),
         }
     }
 
-    /// Returns an iterator with the outgoing neighbors of the given vertex
+    /// Returns an iterator with the outgoing neighbours of the given vertex
     pub fn out_neighbours(&self, vertex: &T) -> std::slice::Iter<'_, T> {
         match self.inbound_table.get(vertex) {
-            Some(neighbors) => neighbors.iter(),
+            Some(neighbours) => neighbours.iter(),
             None => [].iter(),
         }
     }
@@ -205,8 +206,8 @@ mod tests {
         g.add_vertex(2);
         g.add_vertex(3);
         let i = 3;
-        let _ = g.add_edge(2, i);
-        let _ = g.add_edge(i, i);
+        g.add_edge(2, i).unwrap();
+        g.add_edge(i, i).unwrap();
     } 
 
     #[test]
@@ -216,9 +217,9 @@ mod tests {
         g.add_vertex(2);
         g.add_vertex(3);
         let i = 3;
-        let _ = g.add_edge(2, i);
-        let _ = g.add_edge(i, i);
-        let _ = g.remove_vertex(&i);
+        g.add_edge(i, i).unwrap();
+        g.add_edge(2, i).unwrap();
+        g.remove_vertex(&i).unwrap();
         assert!(!g.edges.contains(&(i,i)));
     }
 
@@ -228,11 +229,30 @@ mod tests {
         assert_eq!(g.vertex_count(), 0);
         g.add_vertex_with_label(1, "A");
         g.add_vertex_with_label(2, "B");
-        assert_eq!(g.vertex_count(), 2);
+        g.add_vertex(3);
+        assert_eq!(g.vertex_count(), 3);
 
+        g.add_vertex_with_label(4,"");
         assert_eq!(g.get_label(&1).unwrap(), "A");
-    } 
-    // to do add test with vertex labels 
 
-    // to do add test with neighbours
+        if let Err(e) = g.remove_vertex(&2) {panic!("Error: {:?}", e);}
+
+        assert_eq!(g.get_label(&2), Option::None);
+        assert_eq!(g.get_label(&3), Option::None);
+        assert_eq!(g.get_label(&4).unwrap(), "");
+    } 
+
+    // to do: fix bug with not all the neighbours being in the vector
+    #[test]
+    fn neighbours_in() {
+        let mut g: Graph<u32> = Graph::new();
+        g.add_vertex(1);
+        g.add_vertex(2);
+        g.add_vertex(3);
+        
+        g.add_edge(1,2).unwrap();
+        g.add_edge(1,3).unwrap();
+        let v: Vec<&u32> = g.out_neighbours(&1).collect();
+        assert_eq!(v[0].clone(), 2);
+    }
 }
