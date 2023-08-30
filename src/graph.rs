@@ -48,18 +48,18 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         }
     }
     
-    /// Adds a vertex
+    /// Adds a vertex to do add error when vertex exists already
     pub fn add_vertex(&mut self, vertex: T) {
         self.vertices.insert(vertex);
     }
 
-    /// Adds a vertex with label
+    /// Adds a vertex with label to do add error when vertex exists already
     pub fn add_vertex_with_label(&mut self, vertex: T, label: &str) {
         self.vertices.insert(vertex);
         self.vertex_labels.insert(vertex, label.to_owned());
     }
 
-    /// Adds an edge from outgoing to incoming
+    /// Adds an edge from outgoing to incoming to do add error when edge already exists
     pub fn add_edge(&mut self, outgoing: T, incoming: T) -> Result<(), GraphError> {
         if !self.vertices.contains(&outgoing) || !self.vertices.contains(&incoming) {
             return Err(GraphError::NoSuchVertex);
@@ -205,5 +205,16 @@ mod tests {
         assert!(!g.edges.contains(&(i,i)));
     }
 
+    #[test]
+    fn add_vertices_with_label() {
+        let mut g: Graph<u32> = Graph::new();
+        assert_eq!(g.vertex_count(), 0);
+        g.add_vertex_with_label(1, "A");
+        g.add_vertex_with_label(2, "B");
+        assert_eq!(g.vertex_count(), 2);
+
+    } 
     // to do add test with vertex labels 
+
+    // to do add test with neighbours
 }
