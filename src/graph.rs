@@ -76,7 +76,8 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
             None => {
                 let mut v: Vec<T> = Vec::new();
                 v.push(outgoing);
-                self.inbound_table.insert(incoming, v);}
+                self.inbound_table.insert(incoming, v);
+            }
         }
 
         // Add incoming edge to adjacency table of outgoing vertex
@@ -85,7 +86,8 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
             None => {
                 let mut v: Vec<T> = Vec::new();
                 v.push(incoming);
-                self.inbound_table.insert(outgoing, v);}
+                self.outbound_table.insert(outgoing, v);
+            }
         }
         Ok(())
     }
@@ -155,7 +157,7 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
 
     /// Returns an iterator with the outgoing neighbours of the given vertex
     pub fn out_neighbours(&self, vertex: &T) -> std::slice::Iter<'_, T> {
-        match self.inbound_table.get(vertex) {
+        match self.outbound_table.get(vertex) {
             Some(neighbours) => neighbours.iter(),
             None => [].iter(),
         }
@@ -242,7 +244,6 @@ mod tests {
         assert_eq!(g.get_label(&4).unwrap(), "");
     } 
 
-    // to do: fix bug with not all the neighbours being in the vector
     #[test]
     fn neighbours_in() {
         let mut g: Graph<u32> = Graph::new();
@@ -251,8 +252,12 @@ mod tests {
         g.add_vertex(3);
         
         g.add_edge(1,2).unwrap();
+
+        assert_eq!(g.inbound_table.len(),1);
         g.add_edge(1,3).unwrap();
         let v: Vec<&u32> = g.out_neighbours(&1).collect();
-        assert_eq!(v[0].clone(), 2);
+        assert_eq!(v.len(), 2);
+
+        assert_eq!(v[0], &2);
     }
 }
