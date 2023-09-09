@@ -163,11 +163,10 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         }
     }
 
-    /// to do: Implement function, that tests if vertex is in graph by key
+    /// Returns whether a vertex is in the graph by key
     pub fn is_vertex_in_graph(&self, vertex: &T) -> bool {
-        false
+        self.vertices.contains(vertex)
     }
-
 }
 
 
@@ -264,4 +263,31 @@ mod tests {
 
         assert_eq!(v[0], &2);
     }
+
+    #[test]
+    fn is_vertex_in_graph_given_vertex_in_graph_return_true() {
+        let mut g: Graph<u32> = Graph::new();
+        assert_eq!(g.vertex_count(), 0);
+        g.add_vertex(1);
+        g.add_vertex(2);
+        g.add_vertex(3);
+        assert_eq!(g.vertex_count(), 3);
+
+        assert!(g.is_vertex_in_graph(&1));
+        assert!(g.is_vertex_in_graph(&2));
+        assert!(g.is_vertex_in_graph(&3));
+    }
+
+    #[test]
+    fn is_vertex_in_graph_given_vertex_not_in_graph_return_false() {
+        let mut g: Graph<u32> = Graph::new();
+        assert_eq!(g.vertex_count(), 0);
+        g.add_vertex(1);
+        g.add_vertex(2);
+        g.add_vertex(3);
+        assert_eq!(g.vertex_count(), 3);
+
+        assert!(!g.is_vertex_in_graph(&4));
+        assert!(!g.is_vertex_in_graph(&6));
+    } 
 }
