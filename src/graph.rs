@@ -163,6 +163,11 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         }
     }
 
+    /// to do: Implement function, that tests if vertex is in graph by key
+    pub fn is_vertex_in_graph(&self, vertex: &T) -> bool {
+        false
+    }
+
 }
 
 
