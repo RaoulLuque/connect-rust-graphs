@@ -93,12 +93,12 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
     }
 
     /// Returns the number of vertices
-    pub fn vertex_count(&self) -> usize {
+    pub fn number_of_vertices(&self) -> usize {
         self.vertices.len()
     }
 
     /// Returns the number of edges
-    pub fn edge_count(&self) -> usize {
+    pub fn number_of_edges(&self) -> usize {
         self.edges.len()
     }
 
@@ -206,13 +206,13 @@ mod tests {
         assert!(g.vertices.contains(&2));
         assert!(!g.vertices.contains(&31));
         assert_eq!(g.vertices.len(),3);
-        assert_eq!(g.vertex_count(),3);
+        assert_eq!(g.number_of_vertices(),3);
     }
 
     #[test]
     fn adding_edges() {
         let mut g: Graph<u32> = Graph::new();
-        assert_eq!(g.edge_count(), 0);
+        assert_eq!(g.number_of_edges(), 0);
         g.add_vertex(2);
         g.add_vertex(3);
         let i = 3;
@@ -223,7 +223,7 @@ mod tests {
     #[test]
     fn removing_vertices_and_simultaneously_removing_edges() {
         let mut g: Graph<u32> = Graph::new();
-        assert_eq!(g.edge_count(), 0);
+        assert_eq!(g.number_of_edges(), 0);
         g.add_vertex(2);
         g.add_vertex(3);
         let i = 3;
@@ -236,11 +236,11 @@ mod tests {
     #[test]
     fn add_vertices_with_label() {
         let mut g: Graph<u32> = Graph::new();
-        assert_eq!(g.vertex_count(), 0);
+        assert_eq!(g.number_of_vertices(), 0);
         g.add_vertex_with_label(1, "A");
         g.add_vertex_with_label(2, "B");
         g.add_vertex(3);
-        assert_eq!(g.vertex_count(), 3);
+        assert_eq!(g.number_of_vertices(), 3);
 
         g.add_vertex_with_label(4,"");
         assert_eq!(g.get_label(&1).unwrap(), "A");
@@ -272,11 +272,11 @@ mod tests {
     #[test]
     fn is_vertex_in_graph_given_vertex_in_graph_return_true() {
         let mut g: Graph<u32> = Graph::new();
-        assert_eq!(g.vertex_count(), 0);
+        assert_eq!(g.number_of_vertices(), 0);
         g.add_vertex(1);
         g.add_vertex(2);
         g.add_vertex(3);
-        assert_eq!(g.vertex_count(), 3);
+        assert_eq!(g.number_of_vertices(), 3);
 
         assert!(g.is_vertex_in_graph(&1));
         assert!(g.is_vertex_in_graph(&2));
@@ -286,11 +286,11 @@ mod tests {
     #[test]
     fn is_vertex_in_graph_given_vertex_not_in_graph_return_false() {
         let mut g: Graph<u32> = Graph::new();
-        assert_eq!(g.vertex_count(), 0);
+        assert_eq!(g.number_of_vertices(), 0);
         g.add_vertex(1);
         g.add_vertex(2);
         g.add_vertex(3);
-        assert_eq!(g.vertex_count(), 3);
+        assert_eq!(g.number_of_vertices(), 3);
 
         assert!(!g.is_vertex_in_graph(&4));
         assert!(!g.is_vertex_in_graph(&6));
@@ -299,14 +299,14 @@ mod tests {
     #[test]
     fn is_edge_in_graph_given_edge_in_graph_return_true() {
         let mut g: Graph<u32> = Graph::new();
-        assert_eq!(g.vertex_count(), 0);
+        assert_eq!(g.number_of_vertices(), 0);
         g.add_vertex(1);
         g.add_vertex(2);
         g.add_vertex(3);
         g.add_edge(2, 3).unwrap();
         g.add_edge(2, 1).unwrap();
         g.add_edge(1, 2).unwrap();
-        assert_eq!(g.vertex_count(), 3);
+        assert_eq!(g.number_of_vertices(), 3);
 
         assert!(g.is_edge_in_graph(2, 3));
         assert!(g.is_edge_in_graph(2, 1));
@@ -316,14 +316,14 @@ mod tests {
     #[test]
     fn is_edge_in_graph_given_edge_not_in_graph_return_false() {
         let mut g: Graph<u32> = Graph::new();
-        assert_eq!(g.vertex_count(), 0);
+        assert_eq!(g.number_of_vertices(), 0);
         g.add_vertex(1);
         g.add_vertex(2);
         g.add_vertex(3);
         g.add_edge(2, 3).unwrap();
         g.add_edge(2, 1).unwrap();
         g.add_edge(1, 2).unwrap();
-        assert_eq!(g.vertex_count(), 3);
+        assert_eq!(g.number_of_vertices(), 3);
 
         assert!(!g.is_edge_in_graph(1, 3));
         assert!(!g.is_edge_in_graph(1, 1));
