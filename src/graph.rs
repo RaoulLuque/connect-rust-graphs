@@ -62,31 +62,31 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         self.vertex_labels.insert(vertex, label.to_owned());
     }
 
-    /// Adds an edge from outgoing to incoming to do add error when edge already exists
-    pub fn add_edge(&mut self, outgoing: T, incoming: T) -> Result<(), GraphError> {
-        if !self.vertices.contains(&outgoing) || !self.vertices.contains(&incoming) {
+    /// Adds an edge from outbound to incoming to do add error when edge already exists
+    pub fn add_edge(&mut self, outbound: T, incoming: T) -> Result<(), GraphError> {
+        if !self.vertices.contains(&outbound) || !self.vertices.contains(&incoming) {
             return Err(GraphError::NoSuchVertex);
         }
 
-        self.edges.insert((outgoing, incoming));
+        self.edges.insert((outbound, incoming));
 
-        // Add outgoing edge to adjacency table of incoming vertex
+        // Add outbound edge to adjacency table of incoming vertex
         match self.inbound_table.get_mut(&incoming) {
-            Some(inbounds) => {inbounds.push(outgoing)},
+            Some(inbounds) => {inbounds.push(outbound)},
             None => {
                 let mut v: Vec<T> = Vec::new();
-                v.push(outgoing);
+                v.push(outbound);
                 self.inbound_table.insert(incoming, v);
             }
         }
 
         // Add incoming edge to adjacency table of outgoing vertex
-        match self.outbound_table.get_mut(&outgoing) {
+        match self.outbound_table.get_mut(&outbound) {
             Some(outbounds) => {outbounds.push(incoming);},
             None => {
                 let mut v: Vec<T> = Vec::new();
                 v.push(incoming);
-                self.outbound_table.insert(outgoing, v);
+                self.outbound_table.insert(outbound, v);
             }
         }
         Ok(())
@@ -155,7 +155,7 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         }
     }
 
-    /// Returns an iterator with the outgoing neighbours of the given vertex
+    /// Returns an iterator with the outbound neighbours of the given vertex
     pub fn out_neighbours(&self, vertex: &T) -> std::slice::Iter<'_, T> {
         match self.outbound_table.get(vertex) {
             Some(neighbours) => neighbours.iter(),
@@ -166,6 +166,11 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
     /// Returns whether a vertex is in the graph by key
     pub fn is_vertex_in_graph(&self, vertex: &T) -> bool {
         self.vertices.contains(vertex)
+    }
+
+    /// Returns whether an edge is in the graph by keys of the corresponding vertices
+    pub fn is_edge_in_graph(&self, outbound: T, inbound: T) -> bool {
+        self.edges.contains(&(outbound, inbound))
     }
 }
 
@@ -289,5 +294,39 @@ mod tests {
 
         assert!(!g.is_vertex_in_graph(&4));
         assert!(!g.is_vertex_in_graph(&6));
+    } 
+
+    #[test]
+    fn is_edge_in_graph_given_edge_in_graph_return_true() {
+        let mut g: Graph<u32> = Graph::new();
+        assert_eq!(g.vertex_count(), 0);
+        g.add_vertex(1);
+        g.add_vertex(2);
+        g.add_vertex(3);
+        g.add_edge(2, 3).unwrap();
+        g.add_edge(2, 1).unwrap();
+        g.add_edge(1, 2).unwrap();
+        assert_eq!(g.vertex_count(), 3);
+
+        assert!(g.is_edge_in_graph(2, 3));
+        assert!(g.is_edge_in_graph(2, 1));
+        assert!(g.is_edge_in_graph(1, 2));
+    }
+
+    #[test]
+    fn is_edge_in_graph_given_edge_not_in_graph_return_false() {
+        let mut g: Graph<u32> = Graph::new();
+        assert_eq!(g.vertex_count(), 0);
+        g.add_vertex(1);
+        g.add_vertex(2);
+        g.add_vertex(3);
+        g.add_edge(2, 3).unwrap();
+        g.add_edge(2, 1).unwrap();
+        g.add_edge(1, 2).unwrap();
+        assert_eq!(g.vertex_count(), 3);
+
+        assert!(!g.is_edge_in_graph(1, 3));
+        assert!(!g.is_edge_in_graph(1, 1));
+        assert!(!g.is_edge_in_graph(3, 1));
     } 
 }
