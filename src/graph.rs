@@ -6,6 +6,7 @@ use std::collections::HashSet;
 use std::hash::Hash;
 
 #[derive(Debug)]
+#[derive(PartialEq)]
 /// Graph operation error
 pub enum GraphError {
     /// There is no vertex with the given id in the graph
@@ -147,6 +148,17 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         self.vertex_labels.get_mut(vertex)
     }
 
+    /// Sets the label of a vertex or updates it if none was present
+    /// Returns NoSuchVertex GraphError, if vertex is not in graph
+    pub fn set_label(&mut self, vertex: &T, label: &str) -> Result<(), GraphError> {
+        if !self.vertices.contains(vertex) {
+            return Err(GraphError::NoSuchVertex)
+        } else {
+            self.vertex_labels.insert(*vertex, label.to_owned());
+            Ok(())
+        }
+    }
+
     /// Returns an iterator with the ingoing neighbours of the given vertex
     pub fn in_neighbours(&self, vertex: &T) -> std::slice::Iter<'_, T>{
         match self.inbound_table.get(vertex) {
@@ -234,7 +246,7 @@ mod tests {
     }
 
     #[test]
-    fn add_vertices_with_label() {
+    fn add_vertices_with_label_and_get_label() {
         let mut g: Graph<u32> = Graph::new();
         assert_eq!(g.number_of_vertices(), 0);
         g.add_vertex_with_label(1, "A");
@@ -329,4 +341,20 @@ mod tests {
         assert!(!g.is_edge_in_graph(1, 1));
         assert!(!g.is_edge_in_graph(3, 1));
     } 
+
+    #[test]
+    fn set_label_given_vertex_in_graph_set_label() {
+        let mut g: Graph<u32> = Graph::new();
+        assert_eq!(g.number_of_vertices(), 0);
+        g.add_vertex_with_label(1, "A");
+        g.add_vertex_with_label(2, "B");
+        g.add_vertex(3);
+
+        g.set_label(&3 ,"C").unwrap();
+
+
+        assert_eq!(g.get_label(&3).unwrap() , "C");
+        assert_eq!(g.set_label(&4, ""), Err(GraphError::NoSuchVertex));
+    } 
+
 }
