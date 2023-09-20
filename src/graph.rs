@@ -139,7 +139,7 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
     }
 
     /// Returns the label of a vertex as readable reference
-    pub fn get_label(&mut self, vertex: &T) -> Option<&String> {
+    pub fn get_label(&self, vertex: &T) -> Option<&String> {
         self.vertex_labels.get(vertex)
     }
 
@@ -356,5 +356,4 @@ mod tests {
         assert_eq!(g.get_label(&3).unwrap() , "C");
         assert_eq!(g.set_label(&4, ""), Err(GraphError::NoSuchVertex));
     } 
-
 }
