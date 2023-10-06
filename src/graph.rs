@@ -52,15 +52,17 @@ impl<T: Eq + PartialEq + Hash + Copy> Graph<T> {
         }
     }
     
-    /// Adds a vertex to do add error when vertex exists already
-    pub fn add_vertex(&mut self, vertex: T) {
-        self.vertices.insert(vertex);
+    /// Adds a vertex. If vertex with given key was in graph already returns true. Otherwise
+    /// false
+    pub fn add_vertex(&mut self, vertex: T) -> bool {
+        self.vertices.insert(vertex)
     }
 
-    /// Adds a vertex with label to do add error when vertex exists already
-    pub fn add_vertex_with_label(&mut self, vertex: T, label: &str) {
-        self.vertices.insert(vertex);
+    /// Adds a vertex with label to do add error when vertex exists already. If vertex with given 
+    /// key was in graph already returns true. Otherwise false. The label is the newly given in any case
+    pub fn add_vertex_with_label(&mut self, vertex: T, label: &str) -> bool {
         self.vertex_labels.insert(vertex, label.to_owned());
+        self.vertices.insert(vertex)
     }
 
     /// Adds an edge from outbound to incoming to do add error when edge already exists
